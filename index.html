@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>aDe Akademie 2027 · Jury</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  /* Farben/Schrift hier an das Intranet anpassen */
+  :root {
+    --bg: #f5f4f0; --panel: #ffffff; --ink: #17181a; --muted: #6b6d72; --line: #e2e0da;
+    --accent: #c34f28; --accent-ink: #ffffff; --ok: #2f7d4f; --warn: #b7791f;
+    --radius: 10px; --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 var(--font); }
+  a { color: inherit; }
+  button { font: inherit; cursor: pointer; }
+  header { position: sticky; top: 0; z-index: 5; display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+           padding: 12px 20px; background: var(--ink); color: #fff; }
+  header .brand { font-weight: 700; letter-spacing: .02em; }
+  header nav { display: flex; gap: 4px; }
+  header nav a { text-decoration: none; padding: 6px 12px; border-radius: 999px; opacity: .8; }
+  header nav a.active { background: rgba(255,255,255,.14); opacity: 1; }
+  header .spacer { flex: 1; }
+  header .user { font-size: 13px; opacity: .8; }
+  .btn { border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 7px 14px; border-radius: 8px; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn.ghost { background: transparent; color: inherit; border-color: rgba(255,255,255,.3); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  main { max-width: 1400px; margin: 0 auto; padding: 20px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+  .muted { color: var(--muted); }
+  .center { min-height: 70vh; display: grid; place-items: center; text-align: center; }
+  .bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .progress { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; width: 180px; }
+  .progress > i { display: block; height: 100%; background: var(--accent); }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  th.sort { cursor: pointer; user-select: none; }
+  tbody tr.click { cursor: pointer; }
+  tbody tr.click:hover { background: #faf9f6; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pill { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--line); }
+  .pill.ok { background: #e2f1e8; color: var(--ok); }
+  .pill.open { background: #fbefdc; color: var(--warn); }
+  .tablewrap { overflow-x: auto; }
+
+  .detail { display: grid; grid-template-columns: 260px 1fr 340px; gap: 14px; align-items: start; }
+  .files { padding: 8px; max-height: calc(100vh - 170px); overflow: auto; position: sticky; top: 70px; }
+  .files button { display: flex; gap: 8px; width: 100%; text-align: left; border: 0; background: none; padding: 8px; border-radius: 6px; }
+  .files button:hover { background: #f1efe9; }
+  .files button.active { background: #f6e3dc; }
+  .files .path { font-size: 11px; color: var(--muted); }
+  .files .fname { word-break: break-word; }
+  .viewer { height: calc(100vh - 170px); min-height: 480px; display: flex; flex-direction: column; overflow: hidden; }
+  .viewer .vbar { display: flex; gap: 10px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .viewer iframe { flex: 1; border: 0; width: 100%; background: #eee; }
+  .score { padding: 16px; position: sticky; top: 70px; max-height: calc(100vh - 90px); overflow: auto; }
+  .crit { margin-bottom: 16px; }
+  .crit .lab { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; }
+  .crit .desc { font-size: 12px; color: var(--muted); margin: 2px 0 6px; }
+  .scale { display: flex; flex-wrap: wrap; gap: 4px; }
+  .scale button { min-width: 32px; height: 32px; border: 1px solid var(--line); background: #fff; border-radius: 6px; font-variant-numeric: tabular-nums; }
+  .scale button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .scale input { width: 90px; padding: 6px; border: 1px solid var(--line); border-radius: 6px; font: inherit; }
+  textarea { width: 100%; min-height: 110px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; font: inherit; resize: vertical; }
+  .total { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--line); margin-top: 8px; }
+  .total b { font-size: 22px; }
+  .saved { font-size: 12px; color: var(--muted); margin-top: 6px; min-height: 18px; }
+  .others { margin-top: 14px; padding: 4px 0; }
+  .others h3 { margin: 10px 14px; font-size: 15px; }
+  .comment { white-space: pre-wrap; font-size: 13px; max-width: 420px; }
+  .navbtns { display: flex; gap: 6px; }
+  h1 { font-size: 22px; margin: 0; }
+  .toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff;
+           padding: 10px 16px; border-radius: 8px; font-size: 14px; max-width: 90vw; z-index: 20; }
+  .toast.err { background: #9b2c2c; }
+
+  .form { max-width: 760px; padding: 20px; }
+  .form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form label.f { display: block; margin-bottom: 12px; font-size: 13px; color: var(--muted); }
+  .form input[type=text], .form input[type=email], .form input[type=url] {
+    display: block; width: 100%; margin-top: 4px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; font: inherit; color: var(--ink); }
+  .form h3 { margin: 22px 0 8px; font-size: 15px; }
+  .form .check { display: flex; gap: 8px; align-items: center; margin: 4px 0 12px; }
+  .linkrow { display: grid; grid-template-columns: 1fr 2fr auto; gap: 8px; margin-bottom: 8px; }
+  .linkrow input { margin-top: 0 !important; }
+  .drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px; text-align: center; color: var(--muted); cursor: pointer; }
+  .drop.over { border-color: var(--accent); background: #fbf1ec; }
+  .uplist { margin-top: 10px; }
+  .up { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .up .progress { width: 120px; }
+  .up.done .progress > i { background: var(--ok); }
+  .up.err { color: #9b2c2c; }
+  .xbtn { border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; padding: 2px 6px; }
+  .linkview { display: grid; place-items: center; flex: 1; text-align: center; padding: 20px; }
+
+  @media (max-width: 1100px) {
+    .detail { grid-template-columns: 1fr; }
+    .files, .score { position: static; max-height: none; }
+    .viewer { height: 70vh; }
+  }
+</style>
+</head>
+<body>
+<header id="hdr" hidden>
+  <span class="brand">aDe Akademie 2027 · Jury</span>
+  <nav>
+    <a href="#/" data-nav="list">Bewerbungen</a>
+    <a href="#/ranking" data-nav="ranking">Ranking</a>
+  </nav>
+  <span class="spacer"></span>
+  <button class="btn ghost" id="reloadBtn" title="Daten neu laden">↻</button>
+  <button class="btn ghost" id="syncBtn" hidden>Ordner synchronisieren</button>
+  <span class="user" id="userName"></span>
+  <button class="btn ghost" id="logoutBtn">Abmelden</button>
+</header>
+<main id="app">
+  <div class="center"><div>
+    <h1>aDevantgarde Akademie 2027 · Jury</h1>
+    <p class="muted">Bitte mit dem Google-Konto anmelden, das für die Jury freigeschaltet ist.</p>
+    <div id="gbtn" style="display:inline-block"></div>
+    <p id="loginMsg" class="muted"></p>
+  </div></div>
+</main>
+
+<script>
+/* ───── Konfiguration ───── */
+const CFG = {
+  CLIENT_ID: 'HIER_OAUTH_CLIENT_ID.apps.googleusercontent.com',
+  API_URL:   'https://script.google.com/macros/s/HIER_DEPLOYMENT_ID/exec',
+};
+
+/* ───── Zustand ───── */
+const S = { token: null, data: null, files: {}, loadedAt: 0, drafts: {} };
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (n, d = 1) => n == null || isNaN(n) ? '–' : n.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
+
+/* ───── Anmeldung ───── */
+function decodeJwt(t) {
+  try { return JSON.parse(decodeURIComponent(escape(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))); }
+  catch (e) { return null; }
+}
+function initLogin() {
+  const saved = sessionStorage.getItem('jury_token');
+  const p = saved && decodeJwt(saved);
+  if (p && p.exp * 1000 > Date.now() + 60000) { S.token = saved; return start(); }
+  const wait = () => {
+    if (!window.google?.accounts?.id) return setTimeout(wait, 100);
+    google.accounts.id.initialize({ client_id: CFG.CLIENT_ID, callback: r => onCredential(r.credential), auto_select: true });
+    google.accounts.id.renderButton($('#gbtn'), { theme: 'outline', size: 'large', text: 'signin_with', locale: 'de' });
+    google.accounts.id.prompt();
+  };
+  wait();
+}
+function onCredential(cred) {
+  S.token = cred;
+  sessionStorage.setItem('jury_token', cred);
+  start();
+}
+function logout(expired) {
+  sessionStorage.removeItem('jury_token');
+  S.token = null;
+  try { google.accounts.id.disableAutoSelect(); } catch (e) {}
+  if (expired) sessionStorage.setItem('jury_msg', 'Die Anmeldung ist abgelaufen – bitte erneut anmelden.');
+  location.hash = '#/';
+  location.reload();
+}
+
+/* ───── API ───── */
+async function api(action, payload = {}) {
+  const res = await fetch(CFG.API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action, token: S.token, ...payload }),
+  });
+  const j = await res.json();
+  if (!j.ok) {
+    if (/Token|abgelaufen|Anmeldung erforderlich/.test(j.error)) logout(true);
+    throw new Error(j.error);
+  }
+  return j.data;
+}
+function toast(msg, err) {
+  const t = document.createElement('div');
+  t.className = 'toast' + (err ? ' err' : '');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), err ? 6000 : 2500);
+}
+
+async function start() {
+  $('#app').innerHTML = '<div class="center muted">Lade Bewerbungen …</div>';
+  try {
+    await load();
+  } catch (e) {
+    $('#app').innerHTML = `<div class="center"><div><h1>Kein Zugang</h1><p class="muted">${esc(e.message)}</p>
+      <button class="btn" onclick="logout()">Mit anderem Konto anmelden</button></div></div>`;
+    return;
+  }
+  $('#hdr').hidden = false;
+  $('#userName').textContent = S.data.me.name;
+  $('#syncBtn').hidden = !S.data.me.admin;
+  route();
+}
+async function load() {
+  S.data = await api('bootstrap');
+  S.loadedAt = Date.now();
+}
+
+/* ───── Berechnungen ───── */
+const crit = () => S.data.criteria;
+const maxTotal = () => crit().reduce((s, c) => s + c.max * c.weight, 0);
+function totalOf(values) {
+  let sum = 0;
+  for (const c of crit()) {
+    if (values?.[c.key] == null) return null;
+    sum += values[c.key] * c.weight;
+  }
+  return sum;
+}
+const mean = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;
+const scoresFor = id => S.data.scores.filter(s => s.id === id);
+const myScore = id => S.data.scores.find(s => s.id === id && s.email === S.data.me.email);
+function stats(id) {
+  const sc = scoresFor(id);
+  const totals = sc.map(s => totalOf(s.values)).filter(v => v != null);
+  const perCrit = {};
+  crit().forEach(c => { perCrit[c.key] = mean(sc.map(s => s.values[c.key]).filter(v => v != null)); });
+  return {
+    n: totals.length, avg: mean(totals), perCrit,
+    min: totals.length ? Math.min(...totals) : null, max: totals.length ? Math.max(...totals) : null,
+  };
+}
+const juryName = email => S.data.jury.find(j => j.email === email)?.name || email;
+
+/* ───── Routing ───── */
+window.addEventListener('hashchange', route);
+function route() {
+  if (!S.data) return;
+  const h = location.hash.replace(/^#\/?/, '');
+  const [view, id] = h.split('/');
+  document.querySelectorAll('[data-nav]').forEach(a =>
+    a.classList.toggle('active', a.dataset.nav === (view === 'ranking' ? 'ranking' : 'list')));
+  if (view === 'neu' && S.data.me.admin) return renderEdit(null);
+  if (view === 'b' && id && h.split('/')[2] === 'edit' && S.data.me.admin) return renderEdit(decodeURIComponent(id));
+  if (view === 'b' && id) return renderDetail(decodeURIComponent(id));
+  if (view === 'ranking') return renderRanking();
+  renderList();
+}
+
+/* ───── Liste ───── */
+let listFilter = 'alle';
+function renderList() {
+  const apps = S.data.apps;
+  const admin = S.data.me.admin;
+  const done = apps.filter(a => totalOf(myScore(a.id)?.values) != null).length;
+  const jn = S.data.jury.length;
+  const rows = apps.filter(a => {
+    const mine = totalOf(myScore(a.id)?.values);
+    return listFilter === 'alle' || (listFilter === 'offen' ? mine == null : mine != null);
+  }).map(a => {
+    const st = stats(a.id);
+    const mine = totalOf(myScore(a.id)?.values);
+    return `<tr class="click" data-id="${esc(a.id)}">
+      <td class="muted">${esc(a.id)}</td>
+      <td><b>${esc(a.name)}</b>${a.title ? `<div class="muted">${esc(a.title)}</div>` : ''}</td>
+      ${admin ? `<td class="muted" style="font-size:13px">${esc(a.email || '')}</td>
+        <td>${a.reduced ? '<span class="pill">ermäßigt</span>' : ''}</td>` : ''}
+      <td>${mine != null ? `<span class="pill ok">${fmt(mine, 0)}</span>` : '<span class="pill open">offen</span>'}</td>
+      <td class="num">${fmt(st.avg)}</td>
+      <td class="num muted">${st.n}/${jn}</td>
+    </tr>`;
+  }).join('');
+  $('#app').innerHTML = `
+    <div class="bar">
+      <h1>Bewerbungen</h1><span class="spacer" style="flex:1"></span>
+      <span class="muted">Du hast ${done} von ${apps.length} bewertet</span>
+      <div class="progress"><i style="width:${apps.length ? done / apps.length * 100 : 0}%"></i></div>
+      <select id="flt" class="btn">
+        ${['alle', 'offen', 'bewertet'].map(f => `<option ${f === listFilter ? 'selected' : ''}>${f}</option>`).join('')}
+      </select>
+      ${admin ? '<a href="#/neu" class="btn primary">+ Neue Bewerbung</a>' : ''}
+    </div>
+    <div class="panel tablewrap"><table>
+      <thead><tr><th>ID</th><th>Bewerbung</th>${admin ? '<th>E-Mail</th><th>Ermäßigung</th>' : ''}
+        <th>Meine Punkte</th><th class="num">Ø Jury</th><th class="num">Bewertet</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="${admin ? 7 : 5}" class="muted">Keine Bewerbungen.</td></tr>`}</tbody>
+    </table></div>`;
+  $('#flt').onchange = e => { listFilter = e.target.value; renderList(); };
+  document.querySelectorAll('tr[data-id]').forEach(tr =>
+    tr.onclick = () => location.hash = '#/b/' + encodeURIComponent(tr.dataset.id));
+}
+
+/* ───── Detail ───── */
+const fileIcon = m => m.includes('pdf') ? '📄' : m.startsWith('audio') ? '🎧' : m.startsWith('video') ? '🎬'
+  : m.startsWith('image') ? '🖼' : m.includes('folder') ? '📁' : m.includes('document') ? '📝' : '📎';
+const fmtSize = b => !b ? '' : b > 1e6 ? fmt(b / 1e6) + ' MB' : fmt(b / 1e3, 0) + ' kB';
+
+async function renderDetail(id) {
+  const apps = S.data.apps;
+  const idx = apps.findIndex(a => a.id === id);
+  const a = apps[idx];
+  if (!a) { location.hash = '#/'; return; }
+  const prev = apps[idx - 1], next = apps[idx + 1];
+  const mine = myScore(id);
+  const draft = S.drafts[id] || { values: { ...(mine?.values || {}) }, comment: mine?.comment || '' };
+  S.drafts[id] = draft;
+
+  $('#app').innerHTML = `
+    <div class="bar">
+      <a href="#/" class="btn">← Liste</a>
+      <h1>${esc(a.id)} · ${esc(a.name)}</h1>
+      ${a.title ? `<span class="muted">${esc(a.title)}</span>` : ''}
+      <span style="flex:1"></span>
+      ${S.data.me.admin ? `<a class="btn" href="#/b/${encodeURIComponent(a.id)}/edit">Bearbeiten / Dateien</a>` : ''}
+      <div class="navbtns">
+        <button class="btn" ${prev ? '' : 'disabled'} id="prevBtn">‹ Vorherige</button>
+        <button class="btn" ${next ? '' : 'disabled'} id="nextBtn">Nächste ›</button>
+      </div>
+    </div>
+    ${a.note ? `<p class="muted">${esc(a.note)}</p>` : ''}
+    <div class="detail">
+      <div class="panel files" id="files"><div class="muted" style="padding:8px">Lade Dateien …</div></div>
+      <div class="panel viewer">
+        <div class="vbar"><span id="vname" class="muted">Datei auswählen</span><span style="flex:1"></span>
+          <a id="vopen" class="btn" target="_blank" rel="noopener" hidden>In Drive öffnen ↗</a></div>
+        <iframe id="vframe" allow="autoplay" title="Vorschau"></iframe>
+      </div>
+      <div class="panel score" id="score"></div>
+    </div>
+    <div class="panel others" id="others"></div>`;
+  if (prev) $('#prevBtn').onclick = () => location.hash = '#/b/' + encodeURIComponent(prev.id);
+  if (next) $('#nextBtn').onclick = () => location.hash = '#/b/' + encodeURIComponent(next.id);
+
+  renderScoreForm(a, draft);
+  renderOthers(a);
+
+  try {
+    const files = S.files[id] || (S.files[id] = await api('files', { id }));
+    if (location.hash !== '#/b/' + encodeURIComponent(id)) return;
+    const el = $('#files');
+    const items = [
+      ...files.map(f => ({ ...f, kind: 'file' })),
+      ...(a.links || []).map(l => ({ kind: 'link', name: l.label || l.url, url: l.url, mime: 'link', path: 'Links/' })),
+    ];
+    if (!items.length) { el.innerHTML = '<div class="muted" style="padding:8px">Keine Dateien gefunden.</div>'; return; }
+    el.innerHTML = items.map((f, i) => `
+      <button data-i="${i}"><span>${f.kind === 'link' ? '🔗' : fileIcon(f.mime)}</span><span>
+        ${f.path ? `<div class="path">${esc(f.path)}</div>` : ''}
+        <div class="fname">${esc(f.name)}</div><div class="path">${f.kind === 'link' ? esc(hostOf(f.url)) : fmtSize(f.size)}</div></span></button>`).join('');
+    const show = i => {
+      const f = items[i];
+      el.querySelectorAll('button').forEach(b => b.classList.toggle('active', +b.dataset.i === i));
+      $('#vname').textContent = f.name;
+      const o = $('#vopen'); o.hidden = false;
+      const frame = $('#vframe'); const lv = $('#linkview');
+      if (lv) lv.remove();
+      if (f.kind === 'file') {
+        frame.hidden = false;
+        frame.src = `https://drive.google.com/file/d/${f.id}/preview`;
+        o.href = `https://drive.google.com/file/d/${f.id}/view`; o.textContent = 'In Drive öffnen ↗';
+        return;
+      }
+      o.href = f.url; o.textContent = 'Link öffnen ↗';
+      const emb = embedUrl(f.url);
+      if (emb) { frame.hidden = false; frame.src = emb; return; }
+      frame.hidden = true; frame.src = 'about:blank';
+      frame.insertAdjacentHTML('afterend', `<div class="linkview" id="linkview"><div>
+        <p class="muted">Dieser Link lässt sich nicht einbetten.</p>
+        <a class="btn primary" href="${esc(f.url)}" target="_blank" rel="noopener">${esc(hostOf(f.url))} öffnen ↗</a></div></div>`);
+    };
+    el.querySelectorAll('button').forEach(b => b.onclick = () => show(+b.dataset.i));
+    const firstPdf = items.findIndex(f => f.mime.includes('pdf'));
+    show(firstPdf >= 0 ? firstPdf : 0);
+  } catch (e) {
+    $('#files').innerHTML = `<div class="muted" style="padding:8px">${esc(e.message)}</div>`;
+  }
+}
+
+function renderScoreForm(a, draft) {
+  const el = $('#score');
+  const mine = myScore(a.id);
+  const crits = crit().map(c => {
+    const v = draft.values[c.key];
+    const range = c.max - c.min;
+    const ctrl = Number.isInteger(c.min) && Number.isInteger(c.max) && range <= 15
+      ? Array.from({ length: range + 1 }, (_, k) => c.min + k)
+          .map(n => `<button data-k="${esc(c.key)}" data-v="${n}" class="${v === n ? 'on' : ''}">${n}</button>`).join('')
+      : `<input type="number" data-k="${esc(c.key)}" min="${c.min}" max="${c.max}" step="0.5" value="${v ?? ''}">`;
+    return `<div class="crit">
+      <div class="lab"><span>${esc(c.label)}</span><span class="muted">${c.weight !== 1 ? '×' + fmt(c.weight, 1) + ' · ' : ''}${c.min}–${c.max}</span></div>
+      ${c.description ? `<div class="desc">${esc(c.description)}</div>` : ''}
+      <div class="scale">${ctrl}</div></div>`;
+  }).join('');
+  const t = totalOf(draft.values);
+  el.innerHTML = `
+    <h3 style="margin-top:0">Meine Bewertung</h3>
+    ${crits}
+    <label class="muted" style="font-size:13px">Kommentar</label>
+    <textarea id="cmt" placeholder="Notizen zur Bewerbung (für alle Jurymitglieder sichtbar)">${esc(draft.comment)}</textarea>
+    <div class="total"><span>Summe</span><span><b>${fmt(t, t != null && t % 1 ? 1 : 0)}</b> <span class="muted">/ ${fmt(maxTotal(), 0)}</span></span></div>
+    <button class="btn primary" id="saveBtn" style="width:100%">Speichern</button>
+    <div class="saved" id="savedMsg">${mine?.updated ? 'Zuletzt gespeichert: ' + new Date(mine.updated).toLocaleString('de-DE') : 'Noch nicht gespeichert'}</div>`;
+
+  el.querySelectorAll('.scale button').forEach(b => b.onclick = () => {
+    const k = b.dataset.k, v = +b.dataset.v;
+    draft.values[k] = draft.values[k] === v ? null : v;
+    draft.comment = $('#cmt').value;
+    markDirty(); renderScoreForm(a, draft);
+  });
+  el.querySelectorAll('.scale input').forEach(i => i.onchange = () => {
+    draft.values[i.dataset.k] = i.value === '' ? null : +i.value;
+    draft.comment = $('#cmt').value;
+    markDirty(); renderScoreForm(a, draft);
+  });
+  $('#cmt').oninput = e => { draft.comment = e.target.value; markDirty(); };
+  $('#saveBtn').onclick = async () => {
+    const btn = $('#saveBtn'); btn.disabled = true; btn.textContent = 'Speichere …';
+    try {
+      const values = Object.fromEntries(Object.entries(draft.values).filter(([, v]) => v != null));
+      const saved = await api('saveScore', { id: a.id, values, comment: draft.comment });
+      const i = S.data.scores.findIndex(s => s.id === a.id && s.email === saved.email);
+      if (i >= 0) S.data.scores[i] = saved; else S.data.scores.push(saved);
+      delete S.drafts[a.id]; S.dirty = false;
+      S.drafts[a.id] = { values: { ...saved.values }, comment: saved.comment };
+      toast('Gespeichert');
+      renderScoreForm(a, S.drafts[a.id]); renderOthers(a);
+    } catch (e) {
+      toast(e.message, true); btn.disabled = false; btn.textContent = 'Speichern';
+    }
+  };
+}
+function markDirty() {
+  S.dirty = true;
+  const m = $('#savedMsg'); if (m) m.textContent = 'Ungespeicherte Änderungen';
+}
+
+function renderOthers(a) {
+  const sc = scoresFor(a.id);
+  const st = stats(a.id);
+  const rows = S.data.jury.map(j => {
+    const s = sc.find(x => x.email === j.email);
+    const t = totalOf(s?.values);
+    return `<tr>
+      <td><b>${esc(j.name)}</b>${j.email === S.data.me.email ? ' <span class="muted">(du)</span>' : ''}</td>
+      ${crit().map(c => `<td class="num">${s?.values[c.key] != null ? fmt(s.values[c.key], s.values[c.key] % 1 ? 1 : 0) : '–'}</td>`).join('')}
+      <td class="num"><b>${t != null ? fmt(t, t % 1 ? 1 : 0) : (s ? '<span class="muted">unvollst.</span>' : '–')}</b></td>
+      <td class="comment">${esc(s?.comment || '')}</td></tr>`;
+  }).join('');
+  $('#others').innerHTML = `<h3>Alle Bewertungen · Ø ${fmt(st.avg)} (${st.n}/${S.data.jury.length})</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Jury</th>${crit().map(c => `<th class="num">${esc(c.label)}</th>`).join('')}<th class="num">Summe</th><th>Kommentar</th></tr></thead>
+      <tbody>${rows}
+        <tr><td class="muted">Ø</td>${crit().map(c => `<td class="num muted">${fmt(st.perCrit[c.key])}</td>`).join('')}
+        <td class="num"><b>${fmt(st.avg)}</b></td><td></td></tr>
+      </tbody></table></div>`;
+}
+
+/* ───── Links ───── */
+function hostOf(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return url; } }
+function embedUrl(url) {
+  let m;
+  if ((m = url.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{6,})/)))
+    return `https://www.youtube-nocookie.com/embed/${m[1]}`;
+  if ((m = url.match(/vimeo\.com\/(?:video\/)?(\d+)(?:\/(\w+))?/)))
+    return `https://player.vimeo.com/video/${m[1]}${m[2] ? '?h=' + m[2] : ''}`;
+  if ((m = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/)))
+    return `https://drive.google.com/file/d/${m[1]}/preview`;
+  if ((m = url.match(/soundcloud\.com\/[^?#]+/)))
+    return `https://w.soundcloud.com/player/?url=${encodeURIComponent('https://' + m[0])}`;
+  return null;
+}
+
+/* ───── Bewerbung anlegen / bearbeiten (Admin) ───── */
+const CHUNK = 5 * 1024 * 1024; // Vielfaches von 256 KB
+let pending = [];
+
+function renderEdit(id) {
+  const a = id ? S.data.apps.find(x => x.id === id) : null;
+  if (id && !a) { location.hash = '#/'; return; }
+  pending = [];
+  const links = a?.links?.length ? a.links : [{ label: '', url: '' }];
+  $('#app').innerHTML = `
+    <div class="bar">
+      <a href="${a ? '#/b/' + encodeURIComponent(a.id) : '#/'}" class="btn">← Zurück</a>
+      <h1>${a ? esc(a.id) + ' bearbeiten' : 'Neue Bewerbung'}</h1>
+      ${a?.folderUrl ? `<span style="flex:1"></span><a class="btn" href="${esc(a.folderUrl)}" target="_blank" rel="noopener">Ordner in Drive ↗</a>` : ''}
+    </div>
+    <form class="panel form" id="appForm" autocomplete="off">
+      <div class="row">
+        <label class="f">Name *<input type="text" name="name" required value="${esc(a?.name || '')}"></label>
+        <label class="f">E-Mail<input type="email" name="email" value="${esc(a?.email || '')}"></label>
+      </div>
+      <label class="f">Werktitel<input type="text" name="title" value="${esc(a?.title || '')}"></label>
+      <label class="check"><input type="checkbox" name="reduced" ${a?.reduced ? 'checked' : ''}> Ermäßigung beantragt</label>
+      <label class="f">Notiz (für die Jury sichtbar)<input type="text" name="note" value="${esc(a?.note || '')}"></label>
+
+      <h3>Links (z. B. Videos)</h3>
+      <div id="links">${links.map(linkRow).join('')}</div>
+      <button type="button" class="btn" id="addLink">+ Link</button>
+
+      <h3>Dateien hochladen</h3>
+      <div class="drop" id="drop">Dateien hierher ziehen oder <u>auswählen</u>
+        <input type="file" id="fileIn" multiple hidden></div>
+      <div class="uplist" id="uplist"></div>
+
+      <h3>Aus Drive übernehmen</h3>
+      <label class="f">Link zu einem freigegebenen Ordner oder einer Datei – wird in den Bewerbungsordner kopiert
+        <input type="url" name="drive" placeholder="https://drive.google.com/drive/folders/…"></label>
+
+      <div class="bar" style="margin-top:20px">
+        <button type="submit" class="btn primary" id="saveApp">${a ? 'Speichern' : 'Bewerbung anlegen'}</button>
+        <span class="muted" id="formMsg"></span>
+      </div>
+    </form>`;
+
+  $('#addLink').onclick = () => $('#links').insertAdjacentHTML('beforeend', linkRow({ label: '', url: '' }));
+  $('#links').onclick = e => { if (e.target.matches('.xbtn')) e.target.closest('.linkrow').remove(); };
+  const drop = $('#drop'), fin = $('#fileIn');
+  drop.onclick = () => fin.click();
+  fin.onchange = () => { addFiles(fin.files); fin.value = ''; };
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave = () => drop.classList.remove('over');
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); addFiles(e.dataTransfer.files); };
+  $('#appForm').onsubmit = e => { e.preventDefault(); submitApp(a); };
+}
+function linkRow(l) {
+  return `<div class="linkrow">
+    <input type="text" class="lk-label" placeholder="Bezeichnung (z. B. Video Werk 1)" value="${esc(l.label)}">
+    <input type="url" class="lk-url" placeholder="https://…" value="${esc(l.url)}">
+    <button type="button" class="xbtn" title="Entfernen">×</button></div>`;
+}
+function addFiles(list) {
+  for (const f of list) if (f.size > 0) pending.push({ file: f, status: 'wartet', pct: 0 });
+  renderPending();
+}
+function renderPending() {
+  $('#uplist').innerHTML = pending.map((p, i) => `
+    <div class="up ${p.status === 'fertig' ? 'done' : ''} ${p.error ? 'err' : ''}">
+      <span>${esc(p.file.name)} <span class="muted">${fmtSize(p.file.size)}</span>${p.error ? ' – ' + esc(p.error) : ''}</span>
+      <div class="progress"><i style="width:${p.pct}%"></i></div>
+      ${p.status === 'wartet' || p.error ? `<button type="button" class="xbtn" data-rm="${i}">×</button>` : `<span class="muted" style="font-size:12px">${esc(p.status)}</span>`}
+    </div>`).join('');
+  $('#uplist').querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { pending.splice(+b.dataset.rm, 1); renderPending(); });
+}
+function readChunk(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.slice(r.result.indexOf(',') + 1));
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+async function uploadFile(appId, p) {
+  const f = p.file;
+  p.status = 'lädt …'; p.error = null; renderPending();
+  const { uploadId } = await api('uploadStart', { id: appId, name: f.name, mime: f.type || 'application/octet-stream', size: f.size });
+  for (let offset = 0; offset < f.size; offset += CHUNK) {
+    const data = await readChunk(f.slice(offset, Math.min(offset + CHUNK, f.size)));
+    let tries = 0;
+    while (true) {
+      try { await api('uploadChunk', { uploadId, offset, total: f.size, data }); break; }
+      catch (e) { if (++tries >= 3 || /abgelaufen/.test(e.message)) throw e; await new Promise(r => setTimeout(r, 1500 * tries)); }
+    }
+    p.pct = Math.round(Math.min(offset + CHUNK, f.size) / f.size * 100); renderPending();
+  }
+  p.status = 'fertig'; p.pct = 100; renderPending();
+}
+async function submitApp(a) {
+  const form = $('#appForm'), btn = $('#saveApp'), msg = $('#formMsg');
+  const fd = new FormData(form);
+  const links = [...form.querySelectorAll('.linkrow')].map(r => ({
+    label: $('.lk-label', r).value.trim(), url: $('.lk-url', r).value.trim(),
+  })).filter(l => l.url);
+  const payload = {
+    id: form.dataset.id || a?.id, name: fd.get('name'), email: fd.get('email'), title: fd.get('title'),
+    note: fd.get('note'), reduced: form.reduced.checked, links,
+  };
+  btn.disabled = true; S.dirty = true;
+  try {
+    msg.textContent = 'Speichere Angaben …';
+    const saved = await api('saveApp', { app: payload });
+    form.dataset.id = saved.id;
+    const drive = String(fd.get('drive') || '').trim();
+    if (drive) {
+      msg.textContent = 'Kopiere aus Drive …';
+      const r = await api('importDrive', { id: saved.id, url: drive });
+      toast(`${r.copied} Datei(en) aus Drive kopiert${r.skipped ? `, ${r.skipped} übersprungen` : ''}`);
+      if (r.incomplete) toast('Noch nicht alles kopiert – bitte denselben Link erneut importieren.', true);
+      form.drive.value = '';
+    }
+    const todo = pending.filter(p => p.status !== 'fertig');
+    let failed = 0;
+    for (const [i, p] of todo.entries()) {
+      msg.textContent = `Lade Datei ${i + 1} von ${todo.length} hoch …`;
+      try { await uploadFile(saved.id, p); }
+      catch (e) { p.error = e.message; p.status = 'Fehler'; failed++; renderPending(); }
+    }
+    delete S.files[saved.id];
+    await load();
+    S.dirty = false;
+    if (failed) {
+      msg.textContent = `${failed} Datei(en) fehlgeschlagen – erneut „Speichern“ versucht es nochmal.`;
+      btn.disabled = false;
+      return;
+    }
+    toast('Gespeichert');
+    location.hash = '#/b/' + encodeURIComponent(saved.id);
+  } catch (e) {
+    toast(e.message, true); msg.textContent = ''; btn.disabled = false; S.dirty = false;
+  }
+}
+
+/* ───── Ranking ───── */
+let rankSort = { key: 'avg', dir: -1 };
+function renderRanking() {
+  const jn = S.data.jury.length;
+  const rows = S.data.apps.map(a => ({ a, st: stats(a.id) }));
+  const val = r => rankSort.key === 'avg' ? r.st.avg : rankSort.key === 'n' ? r.st.n
+    : rankSort.key === 'name' ? r.a.name : r.st.perCrit[rankSort.key];
+  rows.sort((x, y) => {
+    const vx = val(x), vy = val(y);
+    if (vx == null && vy == null) return 0;
+    if (vx == null) return 1;
+    if (vy == null) return -1;
+    return (typeof vx === 'string' ? vx.localeCompare(vy, 'de') : vx - vy) * rankSort.dir;
+  });
+  const byAvg = [...rows].filter(r => r.st.avg != null).sort((x, y) => y.st.avg - x.st.avg);
+  const rank = r => { const i = byAvg.indexOf(r); return i < 0 ? '–' : i + 1; };
+  const th = (key, label, cls = 'num') =>
+    `<th class="sort ${cls}" data-k="${esc(key)}">${esc(label)}${rankSort.key === key ? (rankSort.dir < 0 ? ' ↓' : ' ↑') : ''}</th>`;
+  $('#app').innerHTML = `
+    <div class="bar"><h1>Ranking</h1><span style="flex:1"></span>
+      <span class="muted">Gewichtete Summe, max. ${fmt(maxTotal(), 0)} · Durchschnitt über vollständige Bewertungen</span>
+      <button class="btn" id="csvBtn">CSV exportieren</button></div>
+    <div class="panel tablewrap"><table>
+      <thead><tr><th class="num">#</th>${th('name', 'Bewerbung', '')}
+        ${crit().map(c => th(c.key, 'Ø ' + c.label)).join('')}
+        ${th('avg', 'Ø Summe')}<th class="num">Spanne</th>${th('n', 'Bewertet')}</tr></thead>
+      <tbody>${rows.map(r => `<tr class="click" data-id="${esc(r.a.id)}">
+        <td class="num muted">${rank(r)}</td>
+        <td><b>${esc(r.a.name)}</b> <span class="muted">${esc(r.a.id)}</span></td>
+        ${crit().map(c => `<td class="num">${fmt(r.st.perCrit[c.key])}</td>`).join('')}
+        <td class="num"><b>${fmt(r.st.avg)}</b></td>
+        <td class="num muted">${r.st.n ? fmt(r.st.min, 0) + '–' + fmt(r.st.max, 0) : '–'}</td>
+        <td class="num muted">${r.st.n}/${jn}</td></tr>`).join('')}</tbody>
+    </table></div>`;
+  document.querySelectorAll('th.sort').forEach(h => h.onclick = () => {
+    const k = h.dataset.k;
+    rankSort = rankSort.key === k ? { key: k, dir: -rankSort.dir } : { key: k, dir: k === 'name' ? 1 : -1 };
+    renderRanking();
+  });
+  document.querySelectorAll('tr[data-id]').forEach(tr =>
+    tr.onclick = () => location.hash = '#/b/' + encodeURIComponent(tr.dataset.id));
+  $('#csvBtn').onclick = () => exportCsv(byAvg.concat(rows.filter(r => r.st.avg == null)));
+}
+
+function exportCsv(rows) {
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const num = v => v == null ? '' : String(Math.round(v * 100) / 100).replace('.', ',');
+  const head = ['Rang', 'ID', 'Name', 'Titel', ...crit().map(c => 'Ø ' + c.label), 'Ø Summe', 'Bewertungen',
+    ...S.data.jury.map(j => 'Summe ' + j.name)];
+  const lines = rows.map((r, i) => [
+    r.st.avg != null ? i + 1 : '', r.a.id, r.a.name, r.a.title,
+    ...crit().map(c => num(r.st.perCrit[c.key])), num(r.st.avg), r.st.n,
+    ...S.data.jury.map(j => num(totalOf(S.data.scores.find(s => s.id === r.a.id && s.email === j.email)?.values))),
+  ]);
+  const csv = '﻿' + [head, ...lines].map(l => l.map(q).join(';')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const link = Object.assign(document.createElement('a'), { href: url, download: 'akademie-2027-ranking.csv' });
+  link.click(); URL.revokeObjectURL(url);
+}
+
+/* ───── Kopfzeile ───── */
+$('#logoutBtn').onclick = () => logout();
+$('#reloadBtn').onclick = async () => {
+  try { await load(); S.files = {}; route(); toast('Aktualisiert'); } catch (e) { toast(e.message, true); }
+};
+$('#syncBtn').onclick = async () => {
+  const b = $('#syncBtn'); b.disabled = true; b.textContent = 'Synchronisiere …';
+  try {
+    const r = await api('sync');
+    await load(); route();
+    alert(`${r.added.length} neue Bewerbung(en) übernommen, insgesamt ${r.total}.` +
+      (r.added.length ? '\n\n' + r.added.join('\n') : '') +
+      (r.warnings.length ? '\n\nHinweise:\n' + r.warnings.join('\n') : ''));
+  } catch (e) { toast(e.message, true); }
+  b.disabled = false; b.textContent = 'Ordner synchronisieren';
+};
+window.addEventListener('beforeunload', e => { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+const msg = sessionStorage.getItem('jury_msg');
+if (msg) { $('#loginMsg').textContent = msg; sessionStorage.removeItem('jury_msg'); }
+initLogin();
+</script>
+</body>
+</html>
