@@ -224,7 +224,12 @@ function totalOf(values) {
   return sum;
 }
 const mean = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;
-const scoresFor = id => S.data.scores.filter(s => s.id === id);
+const isJuror = j => j.role !== 'comment';
+const jurors = () => S.data.jury.filter(isJuror);
+const commenters = () => S.data.jury.filter(j => !isJuror(j));
+const iComment = () => S.data.me.role === 'comment';
+const jurorEmails = () => new Set(jurors().map(j => j.email));
+const scoresFor = id => { const je = jurorEmails(); return S.data.scores.filter(s => s.id === id && je.has(s.email)); };
 const myScore = id => S.data.scores.find(s => s.id === id && s.email === S.data.me.email);
 function stats(id) {
   const sc = scoresFor(id);
@@ -258,10 +263,11 @@ let listFilter = 'alle';
 function renderList() {
   const apps = S.data.apps;
   const admin = S.data.me.admin;
-  const done = apps.filter(a => totalOf(myScore(a.id)?.values) != null).length;
-  const jn = S.data.jury.length;
+  const isDone = id => iComment() ? !!myScore(id)?.comment : totalOf(myScore(id)?.values) != null;
+  const done = apps.filter(a => isDone(a.id)).length;
+  const jn = jurors().length;
   const rows = apps.filter(a => {
-    const mine = totalOf(myScore(a.id)?.values);
+    const mine = isDone(a.id) ? 1 : null;
     return listFilter === 'alle' || (listFilter === 'offen' ? mine == null : mine != null);
   }).map(a => {
     const st = stats(a.id);
@@ -271,7 +277,8 @@ function renderList() {
       <td><b>${esc(a.name)}</b>${a.title ? `<div class="muted">${esc(a.title)}</div>` : ''}</td>
       ${admin ? `<td class="muted" style="font-size:13px">${esc(a.email || '')}</td>
         <td>${a.reduced ? '<span class="pill">ermäßigt</span>' : ''}</td>` : ''}
-      <td>${mine != null ? `<span class="pill ok">${fmt(mine, 0)}</span>` : '<span class="pill open">offen</span>'}</td>
+      <td>${iComment() ? (mine != null ? '<span class="pill ok">kommentiert</span>' : '<span class="pill open">offen</span>')
+        : mine != null ? `<span class="pill ok">${fmt(mine, 0)}</span>` : '<span class="pill open">offen</span>'}</td>
       <td class="num">${fmt(st.avg)}</td>
       <td class="num muted">${st.n}/${jn}</td>
     </tr>`;
@@ -279,7 +286,7 @@ function renderList() {
   $('#app').innerHTML = `
     <div class="bar">
       <h1>Bewerbungen</h1><span class="spacer" style="flex:1"></span>
-      <span class="muted">Du hast ${done} von ${apps.length} bewertet</span>
+      <span class="muted">Du hast ${done} von ${apps.length} ${iComment() ? 'kommentiert' : 'bewertet'}</span>
       <div class="progress"><i style="width:${apps.length ? done / apps.length * 100 : 0}%"></i></div>
       <select id="flt" class="btn">
         ${['alle', 'offen', 'bewertet'].map(f => `<option ${f === listFilter ? 'selected' : ''}>${f}</option>`).join('')}
@@ -288,7 +295,7 @@ function renderList() {
     </div>
     <div class="panel tablewrap"><table>
       <thead><tr><th>ID</th><th>Bewerbung</th>${admin ? '<th>E-Mail</th><th>Ermäßigung</th>' : ''}
-        <th>Meine Punkte</th><th class="num">Ø Jury</th><th class="num">Bewertet</th></tr></thead>
+        <th>${iComment() ? 'Mein Kommentar' : 'Meine Punkte'}</th><th class="num">Ø Jury</th><th class="num">Bewertet</th></tr></thead>
       <tbody>${rows || `<tr><td colspan="${admin ? 7 : 5}" class="muted">Keine Bewerbungen.</td></tr>`}</tbody>
     </table></div>`;
   $('#flt').onchange = e => { listFilter = e.target.value; renderList(); };
@@ -398,12 +405,13 @@ function renderScoreForm(a, draft) {
       <div class="scale">${ctrl}</div></div>`;
   }).join('');
   const t = totalOf(draft.values);
+  const c = iComment();
   el.innerHTML = `
-    <h3 style="margin-top:0">Meine Bewertung</h3>
-    ${crits}
-    <label class="muted" style="font-size:13px">Kommentar</label>
-    <textarea id="cmt" placeholder="Notizen zur Bewerbung (für alle Jurymitglieder sichtbar)">${esc(draft.comment)}</textarea>
-    <div class="total"><span>Summe</span><span><b>${fmt(t, t != null && t % 1 ? 1 : 0)}</b> <span class="muted">/ ${fmt(maxTotal(), 0)}</span></span></div>
+    <h3 style="margin-top:0">${c ? 'Mein Kommentar' : 'Meine Bewertung'}</h3>
+    ${c ? '<p class="muted" style="font-size:13px;margin-top:0">Du kannst kommentieren, aber keine Punkte vergeben.</p>' : crits}
+    ${c ? '' : '<label class="muted" style="font-size:13px">Kommentar</label>'}
+    <textarea id="cmt" placeholder="Notizen zur Bewerbung (für alle sichtbar)">${esc(draft.comment)}</textarea>
+    ${c ? '' : `<div class="total"><span>Summe</span><span><b>${fmt(t, t != null && t % 1 ? 1 : 0)}</b> <span class="muted">/ ${fmt(maxTotal(), 0)}</span></span></div>`}
     <button class="btn primary" id="saveBtn" style="width:100%">Speichern</button>
     <div class="saved" id="savedMsg">${mine?.updated ? 'Zuletzt gespeichert: ' + new Date(mine.updated).toLocaleString('de-DE') : 'Noch nicht gespeichert'}</div>`;
 
@@ -443,7 +451,7 @@ function markDirty() {
 function renderOthers(a) {
   const sc = scoresFor(a.id);
   const st = stats(a.id);
-  const rows = S.data.jury.map(j => {
+  const rows = jurors().map(j => {
     const s = sc.find(x => x.email === j.email);
     const t = totalOf(s?.values);
     return `<tr>
@@ -452,13 +460,19 @@ function renderOthers(a) {
       <td class="num"><b>${t != null ? fmt(t, t % 1 ? 1 : 0) : (s ? '<span class="muted">unvollst.</span>' : '–')}</b></td>
       <td class="comment">${esc(s?.comment || '')}</td></tr>`;
   }).join('');
-  $('#others').innerHTML = `<h3>Alle Bewertungen · Ø ${fmt(st.avg)} (${st.n}/${S.data.jury.length})</h3>
+  const cmts = commenters().map(j => {
+    const s = S.data.scores.find(x => x.id === a.id && x.email === j.email);
+    return s?.comment ? `<tr><td style="width:200px"><b>${esc(j.name)}</b>${j.email === S.data.me.email ? ' <span class="muted">(du)</span>' : ''}</td>
+      <td class="comment" style="max-width:none">${esc(s.comment)}</td></tr>` : '';
+  }).join('');
+  $('#others').innerHTML = `<h3>Alle Bewertungen · Ø ${fmt(st.avg)} (${st.n}/${jurors().length})</h3>
     <div class="tablewrap"><table>
       <thead><tr><th>Jury</th>${crit().map(c => `<th class="num">${esc(c.label)}</th>`).join('')}<th class="num">Summe</th><th>Kommentar</th></tr></thead>
       <tbody>${rows}
         <tr><td class="muted">Ø</td>${crit().map(c => `<td class="num muted">${fmt(st.perCrit[c.key])}</td>`).join('')}
         <td class="num"><b>${fmt(st.avg)}</b></td><td></td></tr>
-      </tbody></table></div>`;
+      </tbody></table></div>
+    ${cmts ? `<h3>Weitere Kommentare</h3><div class="tablewrap"><table><tbody>${cmts}</tbody></table></div>` : ''}`;
 }
 
 /* ───── Links ───── */
@@ -619,7 +633,7 @@ async function submitApp(a) {
 /* ───── Ranking ───── */
 let rankSort = { key: 'avg', dir: -1 };
 function renderRanking() {
-  const jn = S.data.jury.length;
+  const jn = jurors().length;
   const rows = S.data.apps.map(a => ({ a, st: stats(a.id) }));
   const val = r => rankSort.key === 'avg' ? r.st.avg : rankSort.key === 'n' ? r.st.n
     : rankSort.key === 'name' ? r.a.name : r.st.perCrit[rankSort.key];
@@ -664,11 +678,11 @@ function exportCsv(rows) {
   const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
   const num = v => v == null ? '' : String(Math.round(v * 100) / 100).replace('.', ',');
   const head = ['Rang', 'ID', 'Name', 'Titel', ...crit().map(c => 'Ø ' + c.label), 'Ø Summe', 'Bewertungen',
-    ...S.data.jury.map(j => 'Summe ' + j.name)];
+    ...jurors().map(j => 'Summe ' + j.name)];
   const lines = rows.map((r, i) => [
     r.st.avg != null ? i + 1 : '', r.a.id, r.a.name, r.a.title,
     ...crit().map(c => num(r.st.perCrit[c.key])), num(r.st.avg), r.st.n,
-    ...S.data.jury.map(j => num(totalOf(S.data.scores.find(s => s.id === r.a.id && s.email === j.email)?.values))),
+    ...jurors().map(j => num(totalOf(S.data.scores.find(s => s.id === r.a.id && s.email === j.email)?.values))),
   ]);
   const csv = '﻿' + [head, ...lines].map(l => l.map(q).join(';')).join('\r\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
